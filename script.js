@@ -51,7 +51,7 @@ function crearCardCategoria(categoria, variantes) {
 // ===== CREAR ITEM DE VARIANTE EN MODAL =====
 function crearItemVariante(variante) {
   const precio = Number(variante.precio).toLocaleString("es-AR");
-  const mensaje = encodeURIComponent(`Hola! Quiero pedir: ${variante.nombre} 🍩`);
+  const mensaje = encodeURIComponent(`Hola! Me gustaria encargar: ${variante.nombre}`);
   return `
     <div class="modal-item">
       <img src="${variante.imagen_url}" alt="${variante.nombre}"

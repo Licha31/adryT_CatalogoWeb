@@ -31,7 +31,7 @@ body {
   border-bottom: 1px solid #e8d5cc;
 }
 .logo {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Nunito Sans', serif;
   font-size: 1.5rem;
   color: var(--marron);
   text-decoration: none;
@@ -50,12 +50,12 @@ body {
 /* ===== HERO ===== */
 .hero {
   position: relative;
-  height: 60vh;
+  height: 10%;
   min-height: 500px;
   background: url('https://lh3.googleusercontent.com/d/129XjUdRRsVrpcuK5OLieTF8u0jjYDLeV') center/cover no-repeat;
   display: flex;
   align-items: center;
-  padding: 1rem 16rem 25rem;
+  padding: 12rem 16rem;
 }
 .hero-overlay {
   position: absolute;
@@ -64,11 +64,12 @@ body {
 }
 .hero-content {
   position: relative;
+  z-index: 1;
   color: #fff;
   max-width: 500px;
 }
 .hero-content h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Nunito Sans', serif;
   font-size: clamp(2.2rem, 5vw, 3.5rem);
   margin-bottom: 0.75rem;
   line-height: 1.15;
@@ -102,7 +103,7 @@ body {
   margin: 0 auto;
 }
 .productos h2 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Nunito Sans', bold;
   font-size: 2.2rem;
   color: var(--marron);
   text-align: center;
@@ -140,7 +141,7 @@ body {
   padding: 1.2rem 1.4rem 1.5rem;
 }
 .card-body h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Nunito Sans', bold;
   font-size: 1.2rem;
   margin-bottom: 0.4rem;
 }
@@ -164,7 +165,8 @@ body {
   padding: 5rem 2rem;
 }
 .contacto h2 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pacifico', serif;
+  font-weight: 400;
   font-size: 2rem;
   margin-bottom: 0.75rem;
 }
@@ -240,7 +242,7 @@ footer {
   background: #fff;
 }
 .modal-header h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Nunito Sans', serif;
   font-size: 1.5rem;
   color: var(--marron);
 }
