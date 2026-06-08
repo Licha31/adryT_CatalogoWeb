@@ -1,5 +1,5 @@
 // ===== CONFIGURACIÓN =====
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQGf0lwuT50XetPllLnXTwAolc4HKlJcTLJcWAsyVLZQ85JTZnZ8augLLATB-c3Ke4Kildour8C2T4X/pub?output=csv";
+const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQGf0lwuT50XetPllLnXTwAolc4HKlJcTLJcWAsyVLZQ85JTZnZ8augLLATB-c3Ke4Kildour8C2T4X/pub?output=csv&t=${Date.now()}`;
 const WHATSAPP = "5492645128012";
 
 // ===== PARSEAR CSV =====
