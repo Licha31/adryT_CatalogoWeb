@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adry Tentaciones</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <img src="https://lh3.googleusercontent.com/d/1Wm7U5sVTfjY6gb47hEuQXIWDSu2685G-" alt="Adry Tentaciones" class="hero-logo" />
+    </div>
+  </section>
+
+  <!-- PRODUCTOS -->
+  <section class="productos" id="productos">
+    <h2>Nuestros Productos</h2>
+    <div class="grid" id="producto-grid">
+      <p class="loading">Cargando productos...</p>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section class="contacto" id="contacto">
+    <h2>¿Querés hacer tu pedido?</h2>
+    <p>Escribinos por WhatsApp o Instagram. Hacemos envíos y retiro en local.</p>
+    <a
+      href="https://wa.me/5492645044809?text=Hola!%20Quiero%20hacer%20un%20pedido"
+      target="_blank"
+      class="btn-whatsapp"
+    >
+      📲 Pedir por WhatsApp
+    </a>
+  </section>
+  
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-title"></h3>
+        <button class="modal-close" onclick="cerrarModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Adry Tentaciones · Hecho con amor 🍩</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
