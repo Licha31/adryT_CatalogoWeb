@@ -43,6 +43,7 @@ function crearItemVariante(variante) {
   return `
     <div class="modal-item">
       <img src="${variante.imagen_url}" alt="${variante.nombre}"
+           onclick="abrirLightbox('${variante.imagen_url}', '${variante.nombre}')"
            onerror="this.src='https://via.placeholder.com/300x200?text=Sin+imagen'" />
       <div class="modal-item-info">
         <h4>${variante.nombre}</h4>
@@ -56,6 +57,32 @@ function crearItemVariante(variante) {
       </div>
     </div>
   `;
+}
+
+function abrirLightbox(src, alt) {
+  const lb = document.getElementById("lightbox");
+  document.getElementById("lightbox-img").src = src;
+  document.getElementById("lightbox-img").alt = alt;
+  lb.classList.add("active");
+  document.body.style.overflow = "hidden";
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      lb.style.opacity = "1";
+      lb.querySelector("img").style.transform = "scale(1)";
+    });
+  });
+}
+
+function cerrarLightbox() {
+  const lb = document.getElementById("lightbox");
+  lb.style.opacity = "0";
+  lb.querySelector("img").style.transform = "scale(0.85)";
+  setTimeout(() => {
+    lb.classList.remove("active");
+    lb.style.opacity = "";
+    lb.querySelector("img").style.transform = "";
+    document.body.style.overflow = "";
+  }, 250);
 }
 
 // ===== ABRIR MODAL =====
