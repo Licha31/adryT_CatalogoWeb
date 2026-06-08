@@ -20,28 +20,16 @@ function parseCSV(text) {
   });
 }
 
-// ===== AGRUPAR POR CATEGORÍA =====
-function agruparPorCategoria(productos) {
-  const grupos = {};
-  for (const p of productos) {
-    const cat = p.categoria || "otros";
-    if (!grupos[cat]) grupos[cat] = [];
-    grupos[cat].push(p);
-  }
-  return grupos;
-}
-
 // ===== CREAR CARD DE CATEGORÍA =====
-function crearCardCategoria(categoria, variantes) {
-  const primera = variantes[0];
+function crearCardCategoria(general, variantes) {
   const precioDesde = Math.min(...variantes.map(v => Number(v.precio)));
   return `
-    <div class="card" onclick="abrirModal('${categoria}')">
-      <img src="${primera.imagen_url}" alt="${categoria}" 
+    <div class="card" onclick="abrirModal('${general.categoria}')">
+      <img src="${general.imagen_url}" alt="${general.nombre}" 
            onerror="this.src='https://via.placeholder.com/400x200?text=Sin+imagen'" />
       <div class="card-body">
-        <h3>${categoria.charAt(0).toUpperCase() + categoria.slice(1)}</h3>
-        <p>${variantes.length} variedad${variantes.length > 1 ? 'es' : ''} disponible${variantes.length > 1 ? 's' : ''}</p>
+        <h3>${general.nombre}</h3>
+        <p>${general.descripcion}</p>
         <span class="precio">Desde $${precioDesde.toLocaleString("es-AR")}</span>
       </div>
     </div>
@@ -51,7 +39,7 @@ function crearCardCategoria(categoria, variantes) {
 // ===== CREAR ITEM DE VARIANTE EN MODAL =====
 function crearItemVariante(variante) {
   const precio = Number(variante.precio).toLocaleString("es-AR");
-  const mensaje = encodeURIComponent(`Hola! Me gustaria encargar: ${variante.nombre}`);
+  const mensaje = encodeURIComponent(`Hola! Me gustaria consultar por: ${variante.nombre}`);
   return `
     <div class="modal-item">
       <img src="${variante.imagen_url}" alt="${variante.nombre}"
@@ -71,10 +59,10 @@ function crearItemVariante(variante) {
 }
 
 // ===== ABRIR MODAL =====
-let gruposGlobal = {};
+let variedadesGlobal = {};
 
 function abrirModal(categoria) {
-  const variantes = gruposGlobal[categoria];
+  const variantes = variedadesGlobal[categoria];
   const modal = document.getElementById("modal");
   const modalTitle = document.getElementById("modal-title");
   const modalBody = document.getElementById("modal-body");
@@ -90,7 +78,6 @@ function cerrarModal() {
   document.body.style.overflow = "";
 }
 
-// Cerrar al hacer click fuera
 document.getElementById("modal").addEventListener("click", function(e) {
   if (e.target === this) cerrarModal();
 });
@@ -102,10 +89,23 @@ async function cargarProductos() {
     const response = await fetch(SHEET_CSV_URL);
     const text = await response.text();
     const productos = parseCSV(text);
-    gruposGlobal = agruparPorCategoria(productos);
-    grid.innerHTML = Object.entries(gruposGlobal)
-      .map(([cat, variantes]) => crearCardCategoria(cat, variantes))
+
+    // Separar generales y variedades
+    const generales = productos.filter(p => p.tipo === "general");
+    const variedades = productos.filter(p => p.tipo === "variedad");
+
+    // Agrupar variedades por categoría
+    variedadesGlobal = {};
+    for (const v of variedades) {
+      if (!variedadesGlobal[v.categoria]) variedadesGlobal[v.categoria] = [];
+      variedadesGlobal[v.categoria].push(v);
+    }
+
+    // Renderizar cards usando los generales
+    grid.innerHTML = generales
+      .map(g => crearCardCategoria(g, variedadesGlobal[g.categoria] || []))
       .join("");
+
   } catch (error) {
     grid.innerHTML = `<p class="loading">Error cargando productos. Intentá de nuevo más tarde.</p>`;
     console.error(error);
