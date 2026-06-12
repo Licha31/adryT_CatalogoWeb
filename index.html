@@ -53,9 +53,13 @@
     </div>
   </div>
 
-  <!-- LIGHTBOX -->
+   <!-- LIGHTBOX -->
   <div class="lightbox-overlay" id="lightbox" onclick="cerrarLightbox()">
     <img id="lightbox-img" src="" alt="" />
+    <div id="lightbox-controles" class="lightbox-controles">
+      <button class="lightbox-btn prev" onclick="moverLightbox(-1, event)">‹</button>
+      <button class="lightbox-btn next" onclick="moverLightbox(1, event)">›</button>
+    </div>
   </div>
 
   <footer>

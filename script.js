@@ -2,6 +2,13 @@
 const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQGf0lwuT50XetPllLnXTwAolc4HKlJcTLJcWAsyVLZQ85JTZnZ8augLLATB-c3Ke4Kildour8C2T4X/pub?output=csv&t=${Date.now()}`;
 const WHATSAPP = "5492645128012";
 
+// ===== HELPERS DE IMÁGENES =====
+function idsToUrls(campo) {
+  if (!campo) return [];
+  return campo.split("|").map(id => id.trim()).filter(Boolean)
+    .map(id => `https://drive.google.com/thumbnail?id=${id}&sz=w1000`);
+}
+
 // ===== PARSEAR CSV =====
 function parseCSV(text) {
   const lines = text.trim().split("\n");
@@ -23,10 +30,14 @@ function parseCSV(text) {
 // ===== CREAR CARD DE CATEGORÍA =====
 function crearCardCategoria(general, variantes) {
   const precioDesde = Math.min(...variantes.map(v => Number(v.precio)));
+  const imgs = idsToUrls(general.imagen_url).length
+    ? idsToUrls(general.imagen_url)
+    : idsToUrls(variantes[0]?.imagen_url);
+  const portada = imgs[0] || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect width='100%25' height='100%25' fill='%23f9e4e4'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%237b2d2d' font-family='sans-serif' font-size='18'%3ESin imagen%3C/text%3E%3C/svg%3E";
   return `
     <div class="card" onclick="abrirModal('${general.categoria}')">
-      <img src="${general.imagen_url}" alt="${general.nombre}" 
-           onerror="this.src='https://via.placeholder.com/400x200?text=Sin+imagen'" />
+      <img src="${portada}" alt="${general.nombre}" 
+           onerror="this.src='data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect width='100%25' height='100%25' fill='%23f9e4e4'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%237b2d2d' font-family='sans-serif' font-size='18'%3ESin imagen%3C/text%3E%3C/svg%3E'" />
       <div class="card-body">
         <h3>${general.nombre}</h3>
         <p>${general.descripcion}</p>
@@ -37,14 +48,37 @@ function crearCardCategoria(general, variantes) {
 }
 
 // ===== CREAR ITEM DE VARIANTE EN MODAL =====
+let carruselContador = 0;
+let fotosPorCarrusel = {};
+
 function crearItemVariante(variante) {
   const precio = Number(variante.precio).toLocaleString("es-AR");
   const mensaje = encodeURIComponent(`Hola! Me gustaria consultar por: ${variante.nombre}`);
+  const imgs = idsToUrls(variante.imagen_url);
+  const fotos = imgs.length ? imgs : ["data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='100%25' height='100%25' fill='%23f9e4e4'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%237b2d2d' font-family='sans-serif' font-size='18'%3ESin imagen%3C/text%3E%3C/svg%3E"];
+  const carruselId = `carrusel-${carruselContador++}`;
+  fotosPorCarrusel[carruselId] = fotos;
+
+  const slides = fotos.map((src, i) => `
+    <img src="${src}" alt="${variante.nombre}" class="carrusel-img ${i === 0 ? "active" : ""}"
+         onclick='abrirLightbox("${carruselId}", ${i}, "${variante.nombre.replace(/"/g, "&quot;")}")'
+         onerror="this.src='data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='100%25' height='100%25' fill='%23f9e4e4'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%237b2d2d' font-family='sans-serif' font-size='18'%3ESin imagen%3C/text%3E%3C/svg%3E'" />
+  `).join("");
+
+  const controles = fotos.length > 1 ? `
+    <button class="carrusel-btn prev" onclick="moverCarrusel('${carruselId}', -1)">‹</button>
+    <button class="carrusel-btn next" onclick="moverCarrusel('${carruselId}', 1)">›</button>
+    <div class="carrusel-dots">
+      ${fotos.map((_, i) => `<span class="dot ${i === 0 ? "active" : ""}"></span>`).join("")}
+    </div>
+  ` : "";
+
   return `
     <div class="modal-item">
-      <img src="${variante.imagen_url}" alt="${variante.nombre}"
-           onclick="abrirLightbox('${variante.imagen_url}', '${variante.nombre}')"
-           onerror="this.src='https://via.placeholder.com/300x200?text=Sin+imagen'" />
+      <div class="carrusel" id="${carruselId}" data-indice="0" data-total="${fotos.length}">
+        ${slides}
+        ${controles}
+      </div>
       <div class="modal-item-info">
         <h4>${variante.nombre}</h4>
         <p>${variante.descripcion}</p>
@@ -59,18 +93,56 @@ function crearItemVariante(variante) {
   `;
 }
 
-function abrirLightbox(src, alt) {
+// ===== CARRUSEL =====
+function moverCarrusel(id, direccion) {
+  const carrusel = document.getElementById(id);
+  const total = Number(carrusel.dataset.total);
+  let indice = Number(carrusel.dataset.indice);
+
+  indice = (indice + direccion + total) % total;
+  carrusel.dataset.indice = indice;
+
+  carrusel.querySelectorAll(".carrusel-img").forEach((img, i) => {
+    img.classList.toggle("active", i === indice);
+  });
+  carrusel.querySelectorAll(".dot").forEach((dot, i) => {
+    dot.classList.toggle("active", i === indice);
+  });
+}
+
+let lightboxFotos = [];
+let lightboxIndice = 0;
+
+function abrirLightbox(carruselId, indice, alt) {
+  lightboxFotos = fotosPorCarrusel[carruselId];
+  lightboxIndice = indice;
   const lb = document.getElementById("lightbox");
-  document.getElementById("lightbox-img").src = src;
+  document.getElementById("lightbox-img").src = lightboxFotos[indice];
   document.getElementById("lightbox-img").alt = alt;
   lb.classList.add("active");
   document.body.style.overflow = "hidden";
+  actualizarLightboxControles();
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       lb.style.opacity = "1";
       lb.querySelector("img").style.transform = "scale(1)";
     });
   });
+}
+
+function actualizarLightboxControles() {
+  const controles = document.getElementById("lightbox-controles");
+  if (lightboxFotos.length > 1) {
+    controles.style.display = "flex";
+  } else {
+    controles.style.display = "none";
+  }
+}
+
+function moverLightbox(direccion, event) {
+  event.stopPropagation();
+  lightboxIndice = (lightboxIndice + direccion + lightboxFotos.length) % lightboxFotos.length;
+  document.getElementById("lightbox-img").src = lightboxFotos[lightboxIndice];
 }
 
 function cerrarLightbox() {
