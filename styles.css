@@ -473,4 +473,7 @@ body.modal-open {
       padding: 1rem;
       width: 100%;
     }
+    .modal-header {
+      padding-top: 1.25rem
+    }
   }
