@@ -169,12 +169,12 @@ function abrirModal(categoria) {
   modalTitle.textContent = categoria.charAt(0).toUpperCase() + categoria.slice(1);
   modalBody.innerHTML = variantes.map(crearItemVariante).join("");
   modal.classList.add("active");
-  document.body.style.overflow = "hidden";
+  document.body.classList.add("modal-open");
 }
 
 function cerrarModal() {
   document.getElementById("modal").classList.remove("active");
-  document.body.style.overflow = "";
+  document.body.classList.remove("modal-open");
 }
 
 document.getElementById("modal").addEventListener("click", function(e) {
